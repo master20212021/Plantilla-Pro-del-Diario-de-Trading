@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diario de Trading – Plantilla Pro</title>
+    <!-- Incluye Tailwind CSS desde CDN para estilos minimalistas y responsivos -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Estilos personalizados para la fuente y el fondo */
+        body {
+            font-family: 'Inter', sans-serif; /* Fuente profesional */
+            background-color: #e2e8f0; /* Fondo gris azulado muy claro */
+            color: #1f2937; /* Color de texto oscuro */
+        }
+        /* Estilo para los campos de entrada para que parezcan líneas para escribir */
+        .input-line {
+            border: none;
+            border-bottom: 1px solid #d1d5db; /* Línea inferior sutil */
+            padding: 0.5rem 0;
+            width: 100%;
+            background-color: transparent; /* Fondo transparente */
+            font-size: 1rem;
+            color: #374151; /* Color de texto para la entrada */
+            transition: border-color 0.2s ease-in-out; /* Transición suave para el enfoque */
+        }
+        .input-line:focus {
+            outline: none; /* Sin borde de enfoque al hacer clic */
+            border-bottom-color: #6366f1; /* Color de línea al enfocar */
+        }
+        /* Estilo para el área de texto */
+        .textarea-line {
+            border: 1px solid #d1d5db; /* Borde completo para el área de texto */
+            padding: 0.75rem;
+            width: 100%;
+            min-height: 80px; /* Altura mínima para el área de texto */
+            resize: vertical; /* Permite redimensionar verticalmente */
+            background-color: transparent;
+            font-size: 1rem;
+            color: #374151;
+            border-radius: 0.5rem; /* Bordes redondeados */
+            transition: border-color 0.2s ease-in-out; /* Transición suave para el enfoque */
+        }
+        .textarea-line:focus {
+            outline: none;
+            border-color: #6366f1;
+        }
+        /* Alineación para los íconos */
+        .icon {
+            font-size: 1.5rem; /* Tamaño de los íconos */
+            margin-right: 0.75rem; /* Espacio a la derecha del ícono */
+            flex-shrink: 0; /* Evita que el ícono se encoja */
+        }
+
+        /* Estilos para el campo de resultado dinámico */
+        #resultado {
+            text-align: center;
+            font-size: 2rem; /* Tamaño de fuente grande para el resultado */
+            font-weight: bold;
+            padding: 1rem;
+            border-radius: 0.75rem; /* rounded-xl */
+            margin-top: 0.5rem;
+            transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out; /* Transición suave para los colores */
+            border: 2px solid transparent; /* Borde por defecto */
+        }
+
+        /* Clases de color para el resultado */
+        .result-positive {
+            background-color: #d1fae5; /* Verde claro */
+            color: #065f46; /* Texto verde oscuro */
+            border-color: #34d399; /* Borde verde */
+        }
+
+        .result-negative {
+            background-color: #fee2e2; /* Rojo claro */
+            color: #991b1b; /* Texto rojo oscuro */
+            border-color: #ef4444; /* Borde rojo */
+        }
+
+        .result-neutral {
+            background-color: #f9fafb; /* Gris muy claro */
+            color: #1f2937; /* Texto gris oscuro */
+            border-color: #e5e7eb; /* Borde gris */
+        }
+
+        /* Estilos para la lista de operaciones */
+        .trade-list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background-color: #f9fafb;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            margin-bottom: 0.75rem;
+        }
+        .trade-list-item .result-summary {
+            font-weight: bold;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem; /* text-sm */
+        }
+        .trade-list-item .delete-button {
+            background-color: #ef4444;
+            color: white;
+            padding: 0.3rem 0.6rem;
+            border-radius: 0.375rem; /* rounded-md */
+            font-size: 0.75rem; /* text-xs */
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+        .trade-list-item .delete-button:hover {
+            background-color: #dc2626;
+        }
+
+        /* Estilo para el modal */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1000; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 2.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.05);
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+        .modal-content h3 {
+            color: #1f2937;
+        }
+        .modal-content p {
+            color: #4b5563;
+        }
+        .modal-close-button {
+            background-color: #6366f1;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+        .modal-close-button:hover {
+            background-color: #4f46e5;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+    <div class="bg-white rounded-2xl shadow-2xl p-8 sm:p-10 md:p-12 w-full max-w-3xl border border-gray-100">
+        <!-- Título principal de la plantilla -->
+        <h1 class="text-4xl sm:text-5xl font-extrabold text-center mb-10 text-gray-800">
+            Diario de Trading – Plantilla Pro
+        </h1>
+
+        <!-- Contenedor para las secciones del diario -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Sección: Fecha -->
+            <div class="flex flex-col">
+                <label for="fecha" class="text-lg font-semibold text-gray-700 flex items-center mb-2">
+                    <span class="icon">🗓</span> Fecha
+                </label>
+                <input type="date" id="fecha" class="input-line">
+            </div>
+
+            <!-- Sección: Hora de entrada y salida -->
+            <div class="flex flex-col">
+                <label for="hora" class="text-lg font-semibold text-gray-700 flex items-center mb-2">
+                    <span class="icon">🕐</span> Hora de entrada y salida
+                </label>
+                <input type="text" id="hora" placeholder="Ej: 09:30 AM - 10:15 AM" class="input-line">
+            </div>
+
+            <!-- Sección: Activo operado -->
+            <div class="flex flex-col">
+                <label for="activo" class="text-lg font-semibold text-gray-700 flex items-center mb-2">
+                    <span class="icon">💰</span> Activo operado
+                </label>
+                <input type="text" id="activo" placeholder="Ej: EUR/USD, SPX500, Tesla" class="input-line">
+            </div>
+
+            <!-- Sección: Tipo de entrada (setup o estrategia usada) -->
+            <div class="flex flex-col">
+                <label for="entrada" class="text-lg font-semibold text-gray-700 flex items-center mb-2">
+                    <span class="icon">📈</span> Tipo de entrada (setup o estrategia usada)
+                </label>
+                <input type="text" id="entrada" placeholder="Ej: Ruptura de resistencia, Pullback" class="input-line">
+            </div>
+
+            <!-- Sección: Emoción antes de operar (campo libre) -->
+            <div class="flex flex-col md:col-span-2"> <!-- Ocupa las dos columnas en pantallas grandes -->
+                <label for="emocion-antes" class="text-lg font-semibold text-gray-700 flex items-center mb-2">
+                    <span class="icon">🧠</span> Emoción antes de operar
+                </label>
+                <textarea id="emocion-antes" placeholder="Describe cómo te sentías antes de entrar al mercado..." class="textarea-line"></textarea>
+            </div>
+
+            <!-- Sección: Resultado (ganancia/pérdida) - La casilla de resumen principal -->
+            <div class="flex flex-col md:col-span-2 mt-4">
+                <label for="resultado" class="text-lg font-semibold text-gray-700 flex items-center mb-2">
+                    <span class="icon">💡</span> Resultado (ganancia/pérdida)
+                </label>
+                <!-- Este input ahora es la "casilla" que se colorea -->
+                <input type="text" id="resultado" placeholder="Ej: +150, -75, +2R" class="result-neutral" oninput="updateResultStatus()">
+            </div>
+
+            <!-- Sección: Emoción después de operar -->
+            <div class="flex flex-col">
+                <label for="emocion-despues" class="text-lg font-semibold text-gray-700 flex items-center mb-2">
+                    <span class="icon">🧘‍♂️</span> Emoción después de operar
+                </label>
+                <textarea id="emocion-despues" placeholder="Describe cómo te sentías al cerrar la operación..." class="textarea-line"></textarea>
+            </div>
+
+            <!-- Sección: Lección aprendida -->
+            <div class="flex flex-col">
+                <label for="leccion" class="text-lg font-semibold text-gray-700 flex items-center mb-2">
+                    <span class="icon">📌</span> Lección aprendida
+                </label>
+                <textarea id="leccion" placeholder="¿Qué aprendiste de esta operación? ¿Qué harías diferente?" class="textarea-line"></textarea>
+            </div>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="mt-10 flex flex-col sm:flex-row justify-center gap-4">
+            <button onclick="clearForm()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-lg shadow-md transition-all duration-200 transform hover:scale-105">
+                Limpiar Formulario
+            </button>
+            <button onclick="saveTrade()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-8 rounded-lg shadow-md transition-all duration-200 transform hover:scale-105">
+                Guardar Operación
+            </button>
+        </div>
+
+        <!-- Lista de operaciones guardadas -->
+        <div class="mt-12">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Tus Últimas Operaciones (Máx. 5)</h2>
+            <div id="trades-list" class="space-y-4">
+                <!-- Las operaciones se renderizarán aquí -->
+                <p class="text-center text-gray-500" id="no-trades-message">Aún no hay operaciones guardadas.</p>
+            </div>
+            <!-- Observación general del rendimiento -->
+            <div id="overall-observation" class="mt-8 p-4 rounded-lg bg-blue-50 text-blue-800 border border-blue-200 text-center font-semibold">
+                <!-- La observación general se mostrará aquí -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal personalizado -->
+    <div id="custom-modal" class="modal">
+        <div class="modal-content">
+            <h3 id="modal-title" class="text-2xl font-bold mb-4"></h3>
+            <p id="modal-message" class="text-gray-700 mb-6"></p>
+            <button onclick="hideModal()" class="modal-close-button">
+                Cerrar
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Array para almacenar las operaciones guardadas (hasta 5)
+        let savedTrades = [];
+        const MAX_TRADES = 5;
+
+        /**
+         * Muestra el modal personalizado con un título y mensaje.
+         * @param {string} title - El título del modal.
+         * @param {string} message - El mensaje del modal.
+         */
+        function showModal(title, message) {
+            document.getElementById('modal-title').textContent = title;
+            document.getElementById('modal-message').textContent = message;
+            document.getElementById('custom-modal').style.display = 'flex';
+        }
+
+        /**
+         * Oculta el modal personalizado.
+         */
+        function hideModal() {
+            document.getElementById('custom-modal').style.display = 'none';
+        }
+
+        /**
+         * Actualiza el estado visual del campo de resultado (ganancia/pérdida)
+         * basándose en el valor introducido.
+         */
+        function updateResultStatus() {
+            const resultadoInput = document.getElementById('resultado');
+            const value = resultadoInput.value.trim();
+
+            // Limpia las clases de estado anteriores
+            resultadoInput.classList.remove('result-positive', 'result-negative', 'result-neutral');
+
+            const numericValue = parseFloat(value.replace(/[^0-9.-]/g, ''));
+
+            if (value === "") {
+                resultadoInput.classList.add('result-neutral');
+            } else if (!isNaN(numericValue)) {
+                if (numericValue > 0) {
+                    resultadoInput.classList.add('result-positive');
+                } else if (numericValue < 0) {
+                    resultadoInput.classList.add('result-negative');
+                } else {
+                    resultadoInput.classList.add('result-neutral'); // Para cero o no concluyente
+                }
+            } else {
+                if (value.includes('+') && !value.includes('-')) {
+                    resultadoInput.classList.add('result-positive');
+                } else if (value.includes('-') && !value.includes('+')) {
+                    resultadoInput.classList.add('result-negative');
+                } else {
+                    resultadoInput.classList.add('result-neutral'); // Por ejemplo, si escribe "Breakeven" o texto sin signo
+                }
+            }
+        }
+
+        /**
+         * Obtiene la observación individual para un resultado de trading.
+         * @param {string} result - El string del resultado (ej: "+150", "-2R").
+         * @returns {string} - Una observación basada en el resultado.
+         */
+        function getIndividualObservation(result) {
+            const value = result.trim();
+            const numericValue = parseFloat(value.replace(/[^0-9.-]/g, ''));
+
+            if (!isNaN(numericValue)) {
+                if (numericValue > 0) return "¡Ganancia sólida!";
+                if (numericValue < 0) return "Pérdida manejada.";
+            } else {
+                if (value.includes('+')) return "Operación en positivo.";
+                if (value.includes('-')) return "Resultado en negativo.";
+            }
+            return "Operación neutra o sin cambios.";
+        }
+
+        /**
+         * Renderiza la lista de operaciones guardadas en la interfaz.
+         */
+        function renderTradesList() {
+            const tradesListDiv = document.getElementById('trades-list');
+            tradesListDiv.innerHTML = ''; // Limpia la lista actual
+
+            if (savedTrades.length === 0) {
+                tradesListDiv.innerHTML = '<p class="text-center text-gray-500" id="no-trades-message">Aún no hay operaciones guardadas.</p>';
+                document.getElementById('overall-observation').textContent = "Registra tus operaciones para obtener un análisis de tu rendimiento.";
+                document.getElementById('overall-observation').className = 'mt-8 p-4 rounded-lg bg-blue-50 text-blue-800 border border-blue-200 text-center font-semibold';
+                return;
+            }
+
+            document.getElementById('no-trades-message')?.remove(); // Elimina el mensaje de "no hay operaciones"
+
+            // Muestra las operaciones más recientes primero
+            savedTrades.slice().reverse().forEach(trade => {
+                const listItem = document.createElement('div');
+                listItem.className = 'trade-list-item';
+                listItem.dataset.id = trade.id; // Guarda el ID para eliminación
+
+                // Determina la clase de color para el resultado
+                let resultClass = 'result-neutral';
+                const numericValue = parseFloat(trade.resultado.replace(/[^0-9.-]/g, ''));
+                if (!isNaN(numericValue)) {
+                    if (numericValue > 0) resultClass = 'result-positive';
+                    else if (numericValue < 0) resultClass = 'result-negative';
+                } else {
+                    if (trade.resultado.includes('+')) resultClass = 'result-positive';
+                    else if (trade.resultado.includes('-')) resultClass = 'result-negative';
+                }
+
+                listItem.innerHTML = `
+                    <div class="flex-1 min-w-0 pr-4">
+                        <p class="font-semibold text-gray-800">${trade.activo} (${trade.fecha})</p>
+                        <p class="text-sm text-gray-600">${trade.hora}</p>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <span class="result-summary ${resultClass}">${trade.resultado}</span>
+                        <span class="text-sm text-gray-500">${getIndividualObservation(trade.resultado)}</span>
+                        <button class="delete-button" onclick="deleteTrade('${trade.id}')">Eliminar</button>
+                    </div>
+                `;
+                tradesListDiv.appendChild(listItem);
+            });
+            updateOverallObservation();
+        }
+
+        /**
+         * Calcula y muestra una observación general del rendimiento del trader.
+         */
+        function updateOverallObservation() {
+            const observationDiv = document.getElementById('overall-observation');
+            let wins = 0;
+            let losses = 0;
+            let neutrals = 0;
+
+            savedTrades.forEach(trade => {
+                const value = trade.resultado.trim();
+                const numericValue = parseFloat(value.replace(/[^0-9.-]/g, ''));
+                if (!isNaN(numericValue)) {
+                    if (numericValue > 0) wins++;
+                    else if (numericValue < 0) losses++;
+                    else neutrals++;
+                } else {
+                    if (value.includes('+')) wins++;
+                    else if (value.includes('-')) losses++;
+                    else neutrals++;
+                }
+            });
+
+            let observationText = '';
+            let observationClass = 'mt-8 p-4 rounded-lg text-center font-semibold ';
+
+            if (savedTrades.length === 0) {
+                 observationText = "Registra tus operaciones para obtener un análisis de tu rendimiento.";
+                 observationClass += 'bg-blue-50 text-blue-800 border border-blue-200';
+            } else if (wins > losses && wins > neutrals) {
+                observationText = "¡Excelente! Tu rendimiento general es positivo. Sigue así, manteniendo tu disciplina.";
+                observationClass += 'bg-green-50 text-green-800 border border-green-200';
+            } else if (losses > wins && losses > neutrals) {
+                observationText = "Atención: Tu rendimiento general es negativo. Es momento de **revisar tu estrategia** y gestión de riesgo. Considera una pausa antes de la próxima operación.";
+                observationClass += 'bg-red-50 text-red-800 border border-red-200';
+            } else if (wins === 0 && losses === 0 && neutrals > 0 && savedTrades.length > 0) {
+                 observationText = "Parece que muchas operaciones son neutras. Revisa si tus entradas tienen suficiente potencial.";
+                 observationClass += 'bg-yellow-50 text-yellow-800 border border-yellow-200';
+            }
+            else {
+                observationText = "Resultados mixtos. Analiza los patrones de tus ganancias y pérdidas para mejorar tu consistencia.";
+                observationClass += 'bg-yellow-50 text-yellow-800 border border-yellow-200';
+            }
+            
+            observationDiv.textContent = observationText;
+            observationDiv.className = observationClass; // Aplica la clase completa
+        }
+
+        /**
+         * Limpia todos los campos del formulario.
+         */
+        function clearForm() {
+            document.getElementById('fecha').value = '';
+            document.getElementById('hora').value = '';
+            document.getElementById('activo').value = '';
+            document.getElementById('entrada').value = '';
+            document.getElementById('emocion-antes').value = '';
+            document.getElementById('resultado').value = '';
+            document.getElementById('emocion-despues').value = '';
+            document.getElementById('leccion').value = '';
+            updateResultStatus(); // Restablece el estilo del campo de resultado
+            showModal('Formulario Limpiado', 'Todos los campos han sido restablecidos.');
+        }
+
+        /**
+         * Guarda la operación actual en la lista y actualiza la UI.
+         */
+        function saveTrade() {
+            const fecha = document.getElementById('fecha').value;
+            const hora = document.getElementById('hora').value;
+            const activo = document.getElementById('activo').value;
+            const entrada = document.getElementById('entrada').value;
+            const emocionAntes = document.getElementById('emocion-antes').value;
+            const resultado = document.getElementById('resultado').value;
+            const emocionDespues = document.getElementById('emocion-despues').value;
+            const leccion = document.getElementById('leccion').value;
+
+            // Simple validación: al menos el activo y el resultado deben estar llenos
+            if (!fecha || !activo || !resultado) {
+                showModal('Error al Guardar', 'Por favor, completa al menos la Fecha, Activo y Resultado.');
+                return;
+            }
+
+            const newTrade = {
+                id: Date.now().toString(), // Genera un ID único basado en el timestamp
+                fecha,
+                hora,
+                activo,
+                entrada,
+                emocionAntes,
+                resultado,
+                emocionDespues,
+                leccion
+            };
+
+            // Asegura que no se superen las 5 operaciones
+            if (savedTrades.length >= MAX_TRADES) {
+                savedTrades.shift(); // Elimina la operación más antigua
+            }
+            savedTrades.push(newTrade); // Añade la nueva operación
+
+            renderTradesList(); // Vuelve a dibujar la lista de operaciones
+            clearForm(); // Limpia el formulario para la siguiente entrada
+            showModal('Operación Guardada', '¡Tu operación ha sido registrada con éxito!');
+        }
+
+        /**
+         * Elimina una operación de la lista por su ID.
+         * @param {string} tradeId - El ID de la operación a eliminar.
+         */
+        function deleteTrade(tradeId) {
+            savedTrades = savedTrades.filter(trade => trade.id !== tradeId);
+            renderTradesList(); // Vuelve a dibujar la lista
+            showModal('Operación Eliminada', 'La operación ha sido eliminada de tu diario.');
+        }
+
+        // Ejecutar al cargar la página para establecer el estado inicial del resultado y la lista
+        document.addEventListener('DOMContentLoaded', () => {
+            updateResultStatus();
+            renderTradesList(); // Renderiza la lista al cargar, incluso si está vacía
+        });
+    </script>
+</body>
+</html>
