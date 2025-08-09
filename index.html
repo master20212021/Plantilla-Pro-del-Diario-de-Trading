@@ -6,53 +6,88 @@
     <title>Diario de Trading – Plantilla Pro</title>
     <!-- Incluye Tailwind CSS desde CDN para estilos minimalistas y responsivos -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
+    <!-- Font Awesome para íconos de redes sociales y de contenido -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* Estilos personalizados para la fuente y el fondo */
+        /* Estilos base para el cuerpo, consistentes con las otras páginas */
         body {
-            font-family: 'Inter', sans-serif; /* Fuente profesional */
-            background-color: #e2e8f0; /* Fondo gris azulado muy claro */
-            color: #1f2937; /* Color de texto oscuro */
+            font-family: 'Inter', sans-serif;
+            background-color: #030712; /* Fondo casi negro consistente */
+            color: #E5E7EB; /* Texto gris claro consistente */
+            overflow-x: hidden; /* Evita scroll horizontal */
+            min-height: 100vh; /* Asegura que el body ocupe al menos la altura completa del viewport */
+            display: flex; /* Convierte el body en un flex container */
+            flex-direction: column; /* Apila los hijos verticalmente */
+            align-items: center; /* Centra los hijos horizontalmente si no ocupan todo el ancho */
+            padding: 0; /* Elimina padding directo del body para aplicarlo en el contenedor de contenido */
         }
+        /* Grano/Ruido sutil para el fondo, copiado de la landing page */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAMAAAD9gGz5AAAAAXNSR0IB2cksfwAAAAlwSFlzAAAWJQAAFiUAUFXgxwAAABhQTFRFAAAAsND/sND/sND/sND/sND/sND/sND/sND/jQ0vAAAACnRSTlMAAAAA+wD49z8nBA+MvK+1nQAAABpJREFUeJxjYmBgZGSAjYAAhjFGEGAABgBcA1M77D2NwgAAAABJRU5ErkJggg=='); /* Pequeña imagen de grano */
+            background-repeat: repeat;
+            opacity: 0.02; /* Muy baja opacidad */
+            pointer-events: none; /* Asegura que no interfiera con interacciones */
+            z-index: -1;
+        }
+
+        /* Define una variable CSS para la fuente del encabezado */
+        :root {
+            --heading-font: 'Montserrat', sans-serif; /* Montserrat aplicada por defecto ahora */
+        }
+
+        /* Aplica la fuente Montserrat a todos los h1 y h2 */
+        h1, h2 {
+            font-family: var(--heading-font);
+        }
+
         /* Estilo para los campos de entrada para que parezcan líneas para escribir */
         .input-line {
             border: none;
-            border-bottom: 1px solid #d1d5db; /* Línea inferior sutil */
+            border-bottom: 1px solid #4B5563; /* Línea inferior sutil en oscuro */
             padding: 0.5rem 0;
             width: 100%;
             background-color: transparent; /* Fondo transparente */
             font-size: 1rem;
-            color: #374151; /* Color de texto para la entrada */
+            color: #E5E7EB; /* Color de texto para la entrada en oscuro */
             transition: border-color 0.2s ease-in-out; /* Transición suave para el enfoque */
         }
         .input-line:focus {
             outline: none; /* Sin borde de enfoque al hacer clic */
-            border-bottom-color: #6366f1; /* Color de línea al enfocar */
+            border-bottom-color: #6366f1; /* Color de línea al enfocar (indigo) */
         }
         /* Estilo para el área de texto */
         .textarea-line {
-            border: 1px solid #d1d5db; /* Borde completo para el área de texto */
+            border: 1px solid #4B5563; /* Borde completo para el área de texto en oscuro */
             padding: 0.75rem;
             width: 100%;
             min-height: 80px; /* Altura mínima para el área de texto */
             resize: vertical; /* Permite redimensionar verticalmente */
             background-color: transparent;
             font-size: 1rem;
-            color: #374151;
+            color: #E5E7EB; /* Color de texto para la entrada en oscuro */
             border-radius: 0.5rem; /* Bordes redondeados */
             transition: border-color 0.2s ease-in-out; /* Transición suave para el enfoque */
         }
         .textarea-line:focus {
             outline: none;
-            border-color: #6366f1;
+            border-color: #6366f1; /* Color de enfoque (indigo) */
         }
         /* Alineación para los íconos */
         .icon {
             font-size: 1.5rem; /* Tamaño de los íconos */
             margin-right: 0.75rem; /* Espacio a la derecha del ícono */
             flex-shrink: 0; /* Evita que el ícono se encoja */
+            color: #9CA3AF; /* Color de ícono en gris claro para el tema oscuro */
         }
 
-        /* Estilos para el campo de resultado dinámico */
+        /* Estilo para el campo de resultado dinámico */
         #resultado {
             text-align: center;
             font-size: 2rem; /* Tamaño de fuente grande para el resultado */
@@ -64,34 +99,34 @@
             border: 2px solid transparent; /* Borde por defecto */
         }
 
-        /* Clases de color para el resultado */
+        /* Clases de color para el resultado (adaptadas a fondo oscuro) */
         .result-positive {
-            background-color: #d1fae5; /* Verde claro */
-            color: #065f46; /* Texto verde oscuro */
+            background-color: rgba(52, 211, 153, 0.2); /* Verde con opacidad */
+            color: #34D399; /* Texto verde */
             border-color: #34d399; /* Borde verde */
         }
 
         .result-negative {
-            background-color: #fee2e2; /* Rojo claro */
-            color: #991b1b; /* Texto rojo oscuro */
+            background-color: rgba(239, 68, 68, 0.2); /* Rojo con opacidad */
+            color: #EF4444; /* Texto rojo */
             border-color: #ef4444; /* Borde rojo */
         }
 
         .result-neutral {
-            background-color: #f9fafb; /* Gris muy claro */
-            color: #1f2937; /* Texto gris oscuro */
-            border-color: #e5e7eb; /* Borde gris */
+            background-color: #374151; /* Gris oscuro para neutral */
+            color: #E5E7EB; /* Texto gris claro */
+            border-color: #4B5563; /* Borde gris */
         }
 
-        /* Estilos para la lista de operaciones */
+        /* Estilos para la lista de operaciones (adaptadas a fondo oscuro) */
         .trade-list-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 0.75rem 1rem;
-            background-color: #f9fafb;
+            background-color: #1a202c; /* Fondo de ítem más oscuro */
             border-radius: 0.5rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Sombra sutil */
             margin-bottom: 0.75rem;
         }
         .trade-list-item .result-summary {
@@ -101,7 +136,7 @@
             font-size: 0.875rem; /* text-sm */
         }
         .trade-list-item .delete-button {
-            background-color: #ef4444;
+            background-color: #EF4444; /* Rojo */
             color: white;
             padding: 0.3rem 0.6rem;
             border-radius: 0.375rem; /* rounded-md */
@@ -110,10 +145,10 @@
             transition: background-color 0.2s;
         }
         .trade-list-item .delete-button:hover {
-            background-color: #dc2626;
+            background-color: #DC2626; /* Rojo más oscuro */
         }
 
-        /* Estilo para el modal */
+        /* Estilo para el modal (adaptado a fondo oscuro) */
         .modal {
             display: none; /* Hidden by default */
             position: fixed; /* Stay in place */
@@ -123,28 +158,28 @@
             width: 100%; /* Full width */
             height: 100%; /* Full height */
             overflow: auto; /* Enable scroll if needed */
-            background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
+            background-color: rgba(0,0,0,0.8); /* Black w/ more opacity */
             align-items: center;
             justify-content: center;
         }
         .modal-content {
-            background-color: #fefefe;
+            background-color: #1a202c; /* Fondo oscuro para el modal */
             margin: auto;
             padding: 2.5rem;
             border-radius: 0.75rem;
-            box-shadow: 0 10px 15px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.05);
+            box-shadow: 0 10px 15px rgba(0,0,0,0.3), 0 4px 6px rgba(0,0,0,0.1);
             max-width: 400px;
             width: 90%;
             text-align: center;
         }
         .modal-content h3 {
-            color: #1f2937;
+            color: #E5E7EB; /* Texto claro para el título del modal */
         }
         .modal-content p {
-            color: #4b5563;
+            color: #9CA3AF; /* Texto gris claro para el mensaje del modal */
         }
         .modal-close-button {
-            background-color: #6366f1;
+            background-color: #6366f1; /* Indigo */
             color: white;
             padding: 0.75rem 1.5rem;
             border-radius: 0.5rem;
@@ -152,107 +187,223 @@
             transition: background-color 0.2s;
         }
         .modal-close-button:hover {
-            background-color: #4f46e5;
+            background-color: #4f46e5; /* Indigo más oscuro */
+        }
+
+        /* Estilos de la landing page copiados para consistencia */
+        .section-glow {
+            box-shadow:
+                0 0 40px rgba(34, 211, 238, 0.1), /* Sombra principal más fuerte */
+                0 0 80px rgba(34, 211, 238, 0.05), /* Sombra de halo exterior */
+                0 0 120px rgba(6, 182, 212, 0.03); /* Sombra más difusa */
+            border-radius: 1.5rem; /* Bordes más redondeados para un look premium */
+            overflow: hidden; /* Asegura que las sombras internas se recorten */
+            transition: box-shadow 0.5s ease-in-out; /* Transición suave para el brillo */
+        }
+        .section-glow:hover {
+            box-shadow:
+                0 0 60px rgba(34, 211, 238, 0.15),
+                0 0 100px rgba(34, 211, 238, 0.08),
+                0 0 150px rgba(6, 182, 212, 0.05);
+        }
+        .social-icon {
+            font-size: 1.8rem; /* Tamaño del ícono por defecto en footer */
+            color: #E5E7EB; /* Color por defecto */
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+        .social-icon:hover {
+            transform: translateY(-3px) scale(1.1); /* Efecto de elevación y escala sutil */
+        }
+        .social-icon.header-social {
+            font-size: 2.8rem; /* Tamaño más grande para íconos en el header */
+        }
+        .social-icon.fa-telegram:hover {
+            color: #0088CC; /* Color de Telegram */
+        }
+        .social-icon.fa-instagram:hover {
+            color: #E4405F; /* Color de Instagram */
+        }
+        .social-icon.fa-facebook:hover {
+            color: #1877F2; /* Color de Facebook */
+        }
+        .social-icon.fa-tiktok:hover {
+            color: #69C9D0; /* Color de TikTok (principal) */
+        }
+
+        /* Botones personalizados para el formulario */
+        .form-button {
+            font-weight: 700; /* Bold */
+            padding: 0.75rem 2rem; /* py-3 px-8 */
+            border-radius: 0.5rem; /* rounded-lg */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
+        }
+        .form-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+        }
+        .form-button-primary {
+            background-color: #6366f1; /* Indigo-500 */
+            color: white;
+            border: 2px solid #6366f1;
+        }
+        .form-button-primary:hover {
+            background-color: #4f46e5; /* Indigo-600 */
+            border-color: #4f46e5;
+        }
+        .form-button-secondary {
+            background-color: #374151; /* Gray-700 */
+            color: #E5E7EB; /* Light gray text */
+            border: 2px solid #374151;
+        }
+        .form-button-secondary:hover {
+            background-color: #4B5563; /* Gray-600 */
+            border-color: #4B5563;
+        }
+        /* Ajuste para el mensaje de observación general */
+        #overall-observation {
+            background-color: #1a202c; /* Dark background */
+            color: #E5E7EB; /* Light text */
+            border: 2px solid #374151; /* Darker border */
+        }
+        .overall-positive {
+            background-color: rgba(52, 211, 153, 0.15); /* Green with opacity */
+            color: #34D399 !important; /* Green text */
+            border-color: #34d399; /* Green border */
+        }
+        .overall-negative {
+            background-color: rgba(239, 68, 68, 0.15); /* Red with opacity */
+            color: #EF4444 !important; /* Red text */
+            border-color: #ef4444; /* Red border */
+        }
+        .overall-mixed {
+            background-color: rgba(251, 191, 36, 0.15); /* Amber with opacity */
+            color: #FBBF24 !important; /* Amber text */
+            border-color: #FBBF24; /* Amber border */
         }
     </style>
 </head>
-<body class="flex items-center justify-center min-h-screen p-4">
-    <div class="bg-white rounded-2xl shadow-2xl p-8 sm:p-10 md:p-12 w-full max-w-3xl border border-gray-100">
-        <!-- Título principal de la plantilla -->
-        <h1 class="text-4xl sm:text-5xl font-extrabold text-center mb-10 text-gray-800">
-            Diario de Trading – Plantilla Pro
-        </h1>
+<body class="bg-gray-900 text-white min-h-screen flex flex-col">
+    <!-- Contenedor principal para el header y main, para controlar el centrado y padding -->
+    <div class="flex-grow w-full max-w-4xl mx-auto p-4 sm:p-8">
+        <header class="text-center py-8 bg-gray-800 rounded-2xl section-glow mb-10">
+            <!-- Logo al principio de la página -->
+            <img src="https://i.postimg.cc/nVW2PvKM/logo-png-oficial-fondo-trasparente.png" alt="Logo para_traders_" class="mx-auto h-24 w-auto mb-6 opacity-90">
 
-        <!-- Contenedor para las secciones del diario -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <!-- Sección: Fecha -->
-            <div class="flex flex-col">
-                <label for="fecha" class="text-lg font-semibold text-gray-700 flex items-center mb-2">
-                    <span class="icon">🗓</span> Fecha
-                </label>
-                <input type="date" id="fecha" class="input-line">
-            </div>
+            <p class="text-lg font-semibold text-emerald-400 uppercase">HERRAMIENTA CLAVE</p>
+            <h1 class="text-4xl md:text-5xl font-black mt-2">Diario de Trading – Plantilla Pro</h1>
 
-            <!-- Sección: Hora de entrada y salida -->
-            <div class="flex flex-col">
-                <label for="hora" class="text-lg font-semibold text-gray-700 flex items-center mb-2">
-                    <span class="icon">🕐</span> Hora de entrada y salida
-                </label>
-                <input type="text" id="hora" placeholder="Ej: 09:30 AM - 10:15 AM" class="input-line">
+            <!-- Redes Sociales en Header -->
+            <div class="flex justify-center space-x-8 mt-8 mb-4">
+                <a href="https://t.me/erostrading" target="_blank" rel="noopener noreferrer" aria-label="Telegram de para_traders_">
+                    <i class="fab fa-telegram header-social social-icon text-gray-300 hover:text-cyan-400"></i>
+                </a>
+                <a href="https://www.instagram.com/para_traders__?igsh=MXd0eGdtZ3ZnaWJxag==" target="_blank" rel="noopener noreferrer" aria-label="Instagram de para_traders_">
+                    <i class="fab fa-instagram header-social social-icon text-gray-300 hover:text-pink-500"></i>
+                </a>
+                <a href="https://www.facebook.com/paraltraders" target="_blank" rel="noopener noreferrer" aria-label="Facebook de para_traders_">
+                    <i class="fab fa-facebook header-social social-icon text-gray-300 hover:text-blue-600"></i>
+                </a>
+                <a href="https://www.tiktok.com/@para_traders?_t=ZT-8yicg47qPio&_r=1" target="_blank" rel="noopener noreferrer" aria-label="TikTok de para_traders_">
+                    <i class="fab fa-tiktok header-social social-icon text-gray-300 hover:text-teal-400"></i>
+                </a>
             </div>
+        </header>
 
-            <!-- Sección: Activo operado -->
-            <div class="flex flex-col">
-                <label for="activo" class="text-lg font-semibold text-gray-700 flex items-center mb-2">
-                    <span class="icon">💰</span> Activo operado
-                </label>
-                <input type="text" id="activo" placeholder="Ej: EUR/USD, SPX500, Tesla" class="input-line">
-            </div>
+        <main class="space-y-10">
+            <div class="bg-gray-800 rounded-2xl section-glow shadow-2xl p-8 sm:p-10 md:p-12 w-full border border-gray-700">
+                <!-- Contenedor para las secciones del diario -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Sección: Fecha -->
+                    <div class="flex flex-col">
+                        <label for="fecha" class="text-lg font-semibold text-gray-200 flex items-center mb-2">
+                            <span class="icon">🗓️</span> Fecha
+                        </label>
+                        <input type="date" id="fecha" class="input-line">
+                    </div>
 
-            <!-- Sección: Tipo de entrada (setup o estrategia usada) -->
-            <div class="flex flex-col">
-                <label for="entrada" class="text-lg font-semibold text-gray-700 flex items-center mb-2">
-                    <span class="icon">📈</span> Tipo de entrada (setup o estrategia usada)
-                </label>
-                <input type="text" id="entrada" placeholder="Ej: Ruptura de resistencia, Pullback" class="input-line">
-            </div>
+                    <!-- Sección: Hora de entrada y salida -->
+                    <div class="flex flex-col">
+                        <label for="hora" class="text-lg font-semibold text-gray-200 flex items-center mb-2">
+                            <span class="icon">🕐</span> Hora de entrada y salida
+                        </label>
+                        <input type="text" id="hora" placeholder="Ej: 09:30 AM - 10:15 AM" class="input-line">
+                    </div>
 
-            <!-- Sección: Emoción antes de operar (campo libre) -->
-            <div class="flex flex-col md:col-span-2"> <!-- Ocupa las dos columnas en pantallas grandes -->
-                <label for="emocion-antes" class="text-lg font-semibold text-gray-700 flex items-center mb-2">
-                    <span class="icon">🧠</span> Emoción antes de operar
-                </label>
-                <textarea id="emocion-antes" placeholder="Describe cómo te sentías antes de entrar al mercado..." class="textarea-line"></textarea>
-            </div>
+                    <!-- Sección: Activo operado -->
+                    <div class="flex flex-col">
+                        <label for="activo" class="text-lg font-semibold text-gray-200 flex items-center mb-2">
+                            <span class="icon">💰</span> Activo operado
+                        </label>
+                        <input type="text" id="activo" placeholder="Ej: EUR/USD, SPX500, Tesla" class="input-line">
+                    </div>
 
-            <!-- Sección: Resultado (ganancia/pérdida) - La casilla de resumen principal -->
-            <div class="flex flex-col md:col-span-2 mt-4">
-                <label for="resultado" class="text-lg font-semibold text-gray-700 flex items-center mb-2">
-                    <span class="icon">💡</span> Resultado (ganancia/pérdida)
-                </label>
-                <!-- Este input ahora es la "casilla" que se colorea -->
-                <input type="text" id="resultado" placeholder="Ej: +150, -75, +2R" class="result-neutral" oninput="updateResultStatus()">
-            </div>
+                    <!-- Sección: Tipo de entrada (setup o estrategia usada) -->
+                    <div class="flex flex-col">
+                        <label for="entrada" class="text-lg font-semibold text-gray-200 flex items-center mb-2">
+                            <span class="icon">📈</span> Tipo de entrada (setup o estrategia usada)
+                        </label>
+                        <input type="text" id="entrada" placeholder="Ej: Ruptura de resistencia, Pullback" class="input-line">
+                    </div>
 
-            <!-- Sección: Emoción después de operar -->
-            <div class="flex flex-col">
-                <label for="emocion-despues" class="text-lg font-semibold text-gray-700 flex items-center mb-2">
-                    <span class="icon">🧘‍♂️</span> Emoción después de operar
-                </label>
-                <textarea id="emocion-despues" placeholder="Describe cómo te sentías al cerrar la operación..." class="textarea-line"></textarea>
-            </div>
+                    <!-- Sección: Emoción antes de operar (campo libre) -->
+                    <div class="flex flex-col md:col-span-2"> <!-- Ocupa las dos columnas en pantallas grandes -->
+                        <label for="emocion-antes" class="text-lg font-semibold text-gray-200 flex items-center mb-2">
+                            <span class="icon">🧠</span> Emoción antes de operar
+                        </label>
+                        <textarea id="emocion-antes" placeholder="Describe cómo te sentías antes de entrar al mercado..." class="textarea-line"></textarea>
+                    </div>
 
-            <!-- Sección: Lección aprendida -->
-            <div class="flex flex-col">
-                <label for="leccion" class="text-lg font-semibold text-gray-700 flex items-center mb-2">
-                    <span class="icon">📌</span> Lección aprendida
-                </label>
-                <textarea id="leccion" placeholder="¿Qué aprendiste de esta operación? ¿Qué harías diferente?" class="textarea-line"></textarea>
-            </div>
-        </div>
+                    <!-- Sección: Resultado (ganancia/pérdida) - La casilla de resumen principal -->
+                    <div class="flex flex-col md:col-span-2 mt-4">
+                        <label for="resultado" class="text-lg font-semibold text-gray-200 flex items-center mb-2">
+                            <span class="icon">💡</span> Resultado (ganancia/pérdida)
+                        </label>
+                        <!-- Este input ahora es la "casilla" que se colorea -->
+                        <input type="text" id="resultado" placeholder="Ej: +150, -75, +2R" class="result-neutral" oninput="updateResultStatus()">
+                    </div>
 
-        <!-- Botones de acción -->
-        <div class="mt-10 flex flex-col sm:flex-row justify-center gap-4">
-            <button onclick="clearForm()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-lg shadow-md transition-all duration-200 transform hover:scale-105">
-                Limpiar Formulario
-            </button>
-            <button onclick="saveTrade()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-8 rounded-lg shadow-md transition-all duration-200 transform hover:scale-105">
-                Guardar Operación
-            </button>
-        </div>
+                    <!-- Sección: Emoción después de operar -->
+                    <div class="flex flex-col">
+                        <label for="emocion-despues" class="text-lg font-semibold text-gray-200 flex items-center mb-2">
+                            <span class="icon">🧘‍♂️</span> Emoción después de operar
+                        </label>
+                        <textarea id="emocion-despues" placeholder="Describe cómo te sentías al cerrar la operación..." class="textarea-line"></textarea>
+                    </div>
 
-        <!-- Lista de operaciones guardadas -->
-        <div class="mt-12">
-            <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Tus Últimas Operaciones (Máx. 5)</h2>
-            <div id="trades-list" class="space-y-4">
-                <!-- Las operaciones se renderizarán aquí -->
-                <p class="text-center text-gray-500" id="no-trades-message">Aún no hay operaciones guardadas.</p>
+                    <!-- Sección: Lección aprendida -->
+                    <div class="flex flex-col">
+                        <label for="leccion" class="text-lg font-semibold text-gray-200 flex items-center mb-2">
+                            <span class="icon">📌</span> Lección aprendida
+                        </label>
+                        <textarea id="leccion" placeholder="¿Qué aprendiste de esta operación? ¿Qué harías diferente?" class="textarea-line"></textarea>
+                    </div>
+                </div>
+
+                <!-- Botones de acción -->
+                <div class="mt-10 flex flex-col sm:flex-row justify-center gap-4">
+                    <button onclick="clearForm()" class="form-button form-button-secondary">
+                        Limpiar Formulario
+                    </button>
+                    <button onclick="saveTrade()" class="form-button form-button-primary">
+                        Guardar Operación
+                    </button>
+                </div>
+
+                <!-- Lista de operaciones guardadas -->
+                <div class="mt-12">
+                    <h2 class="text-2xl font-bold text-gray-200 mb-6 text-center">Tus Últimas Operaciones (Máx. 5)</h2>
+                    <div id="trades-list" class="space-y-4">
+                        <!-- Las operaciones se renderizarán aquí -->
+                        <p class="text-center text-gray-500" id="no-trades-message">Aún no hay operaciones guardadas.</p>
+                    </div>
+                    <!-- Observación general del rendimiento -->
+                    <div id="overall-observation" class="mt-8 p-4 rounded-lg bg-blue-50 text-blue-800 border border-blue-200 text-center font-semibold">
+                        <!-- La observación general se mostrará aquí -->
+                    </div>
+                </div>
             </div>
-            <!-- Observación general del rendimiento -->
-            <div id="overall-observation" class="mt-8 p-4 rounded-lg bg-blue-50 text-blue-800 border border-blue-200 text-center font-semibold">
-                <!-- La observación general se mostrará aquí -->
-            </div>
-        </div>
+        </main>
     </div>
 
     <!-- Modal personalizado -->
@@ -265,6 +416,32 @@
             </button>
         </div>
     </div>
+
+    <!-- Pie de página con logo, redes sociales y disclaimer -->
+    <footer class="text-center py-12 px-4 bg-gray-900 border-t border-gray-700 w-full max-w-4xl mx-auto">
+        <!-- Logo en el pie de página -->
+        <img src="https://i.postimg.cc/nVW2PvKM/logo-png-oficial-fondo-trasparente.png" alt="Logo de para_traders_" class="mx-auto h-20 w-auto mb-6 opacity-80" loading="lazy">
+        
+        <!-- Redes sociales -->
+        <div class="flex justify-center space-x-6 mb-6">
+            <a href="https://t.me/erostrading" target="_blank" rel="noopener noreferrer" aria-label="Telegram de para_traders_">
+                <i class="fab fa-telegram social-icon"></i>
+            </a>
+            <a href="https://www.instagram.com/para_traders__?igsh=MXd0eGdtZ3ZnaWJxag==" target="_blank" rel="noopener noreferrer" aria-label="Instagram de para_traders_">
+                <i class="fab fa-instagram social-icon"></i>
+            </a>
+            <a href="https://www.facebook.com/paraltraders" target="_blank" rel="noopener noreferrer" aria-label="Facebook de para_traders_">
+                <i class="fab fa-facebook social-icon"></i>
+            </a>
+            <a href="https://www.tiktok.com/@para_traders?_t=ZT-8yicg47qPio&_r=1" target="_blank" rel="noopener noreferrer" aria-label="TikTok de para_traders_">
+                <i class="fab fa-tiktok social-icon"></i>
+            </a>
+        </div>
+
+        <p class="text-sm text-gray-500 max-w-2xl mx-auto">
+            Aviso Legal: "para_traders_" ofrece contenido educativo y de desarrollo personal en el ámbito del psicotrading. Este curso no constituye asesoramiento financiero, de inversión ni recomendación de productos financieros específicos. Operar en los mercados financieros implica un riesgo significativo de pérdida de capital y no es adecuado para todos los inversores. Los resultados pasados no garantizan resultados futuros. Las decisiones de inversión son responsabilidad exclusiva del usuario.
+        </p>
+    </footer>
 
     <script>
         // Array para almacenar las operaciones guardadas (hasta 5)
@@ -352,7 +529,7 @@
             if (savedTrades.length === 0) {
                 tradesListDiv.innerHTML = '<p class="text-center text-gray-500" id="no-trades-message">Aún no hay operaciones guardadas.</p>';
                 document.getElementById('overall-observation').textContent = "Registra tus operaciones para obtener un análisis de tu rendimiento.";
-                document.getElementById('overall-observation').className = 'mt-8 p-4 rounded-lg bg-blue-50 text-blue-800 border border-blue-200 text-center font-semibold';
+                document.getElementById('overall-observation').className = 'mt-8 p-4 rounded-lg text-center font-semibold bg-gray-700 text-gray-200 border border-gray-600'; // Initial state for overall observation
                 return;
             }
 
@@ -377,8 +554,8 @@
 
                 listItem.innerHTML = `
                     <div class="flex-1 min-w-0 pr-4">
-                        <p class="font-semibold text-gray-800">${trade.activo} (${trade.fecha})</p>
-                        <p class="text-sm text-gray-600">${trade.hora}</p>
+                        <p class="font-semibold text-gray-200">${trade.activo} (${trade.fecha})</p>
+                        <p class="text-sm text-gray-400">${trade.hora}</p>
                     </div>
                     <div class="flex items-center space-x-3">
                         <span class="result-summary ${resultClass}">${trade.resultado}</span>
@@ -418,21 +595,21 @@
             let observationClass = 'mt-8 p-4 rounded-lg text-center font-semibold ';
 
             if (savedTrades.length === 0) {
-                 observationText = "Registra tus operaciones para obtener un análisis de tu rendimiento.";
-                 observationClass += 'bg-blue-50 text-blue-800 border border-blue-200';
+                observationText = "Registra tus operaciones para obtener un análisis de tu rendimiento.";
+                observationClass += 'bg-gray-700 text-gray-200 border border-gray-600';
             } else if (wins > losses && wins > neutrals) {
                 observationText = "¡Excelente! Tu rendimiento general es positivo. Sigue así, manteniendo tu disciplina.";
-                observationClass += 'bg-green-50 text-green-800 border border-green-200';
+                observationClass += 'overall-positive'; // Custom class for positive
             } else if (losses > wins && losses > neutrals) {
                 observationText = "Atención: Tu rendimiento general es negativo. Es momento de **revisar tu estrategia** y gestión de riesgo. Considera una pausa antes de la próxima operación.";
-                observationClass += 'bg-red-50 text-red-800 border border-red-200';
+                observationClass += 'overall-negative'; // Custom class for negative
             } else if (wins === 0 && losses === 0 && neutrals > 0 && savedTrades.length > 0) {
-                 observationText = "Parece que muchas operaciones son neutras. Revisa si tus entradas tienen suficiente potencial.";
-                 observationClass += 'bg-yellow-50 text-yellow-800 border border-yellow-200';
+                observationText = "Parece que muchas operaciones son neutras. Revisa si tus entradas tienen suficiente potencial.";
+                observationClass += 'overall-mixed'; // Custom class for mixed/neutral
             }
             else {
                 observationText = "Resultados mixtos. Analiza los patrones de tus ganancias y pérdidas para mejorar tu consistencia.";
-                observationClass += 'bg-yellow-50 text-yellow-800 border border-yellow-200';
+                observationClass += 'overall-mixed'; // Custom class for mixed/neutral
             }
             
             observationDiv.textContent = observationText;
@@ -493,8 +670,7 @@
             savedTrades.push(newTrade); // Añade la nueva operación
 
             renderTradesList(); // Vuelve a dibujar la lista de operaciones
-            clearForm(); // Limpia el formulario para la siguiente entrada
-            showModal('Operación Guardada', '¡Tu operación ha sido registrada con éxito!');
+            clearForm(); // Limpia el formulario para la siguiente entrada (y muestra modal de éxito)
         }
 
         /**
